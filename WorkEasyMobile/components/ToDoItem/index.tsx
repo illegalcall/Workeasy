@@ -1,27 +1,27 @@
-import React, { useState, useEffect, useRef } from 'react'
-import { View, TextInput } from 'react-native'
-import { useMutation, gql } from '@apollo/client';
+import React, { useState, useEffect, useRef } from "react";
+import { View, TextInput } from "react-native";
+import { useMutation, gql } from "@apollo/client";
 
-import Checkbox from '../Checkbox';
+import Checkbox from "../Checkbox";
 
 const UPDATE_TODO = gql`
-mutation updateToDo($id:ID!, $content: String, $isCompleted: Boolean) {
-  updateToDo(id: $id, content: $content, isCompleted: $isCompleted) {
-    id
-		content
-    isCompleted
-    
-    taskList {
-      title
-      progress
-      todos {
-        id
-        content
-        isCompleted
+  mutation updateToDo($id: ID!, $content: String, $isCompleted: Boolean) {
+    updateToDo(id: $id, content: $content, isCompleted: $isCompleted) {
+      id
+      content
+      isCompleted
+
+      taskList {
+        title
+        progress
+        todos {
+          id
+          content
+          isCompleted
+        }
       }
     }
   }
-}
 `;
 
 interface ToDoItemProps {
@@ -29,17 +29,16 @@ interface ToDoItemProps {
     id: string;
     content: string;
     isCompleted: boolean;
-  },
-  onSubmit: () => void
+  };
+  onSubmit: () => void;
 }
 
 const ToDoItem = ({ todo, onSubmit }: ToDoItemProps) => {
   const [isChecked, setIsChecked] = useState(false);
-  const [content, setContent] = useState('');
+  const [content, setContent] = useState("");
 
   const [updateItem] = useMutation(UPDATE_TODO);
   const input = useRef(null);
-
 
   const callUpdateItem = () => {
     updateItem({
@@ -47,61 +46,64 @@ const ToDoItem = ({ todo, onSubmit }: ToDoItemProps) => {
         id: todo.id,
         content,
         isCompleted: isChecked,
-      }
-    })
+      },
+    });
   };
 
-
   useEffect(() => {
-    if (!todo) { return }
+    if (!todo) {
+      return;
+    }
 
     setIsChecked(todo.isCompleted);
-    setContent(todo.content); 
-  }, [todo])
+    setContent(todo.content);
+  }, [todo]);
 
   useEffect(() => {
     if (input.current) {
       input?.current?.focus();
     }
-  }, [input])
+  }, [input]);
 
   const onKeyPress = ({ nativeEvent }) => {
-    if (nativeEvent.key === 'Backspace' && content === '') {
+    if (nativeEvent.key === "Backspace" && content === "") {
       // Delete item
-      console.warn('Delete item');
+      console.warn("Delete item");
     }
-  }
+  };
 
   return (
-    <View style={{ flexDirection: 'row', alignItems: 'center', marginVertical: 3 }}>
-        {/* Checkbox */}
-        <Checkbox 
-          isChecked={isChecked}
-          onPress={() => { 
-            setIsChecked(!isChecked);
-            callUpdateItem();
-          }}
-        />
+    <View
+      style={{ flexDirection: "row", alignItems: "center", marginVertical: 3 }}
+    >
+      {/* Checkbox */}
+      <Checkbox
+        isChecked={isChecked}
+        onPress={() => {
+          setIsChecked(!isChecked);
+          callUpdateItem();
+        }}
+      />
 
-        {/* Text Input */}
-        <TextInput
-          ref={input}
-          value={content}
-          onChangeText={setContent}
-          style={{
-            flex: 1,
-            fontSize: 18,
-            color: 'white',
-            marginLeft: 12,
-          }}
-          multiline
-          onEndEditing={callUpdateItem}
-          onSubmitEditing={onSubmit}
-          blurOnSubmit
-          onKeyPress={onKeyPress}
-        />
-      </View>
-  )
-}
+      {/* Text Input */}
+      <TextInput
+        ref={input}
+        value={content}
+        onChangeText={setContent}
+        style={{
+          flex: 1,
+          fontSize: 18,
+          color: "black",
+          marginLeft: 12,
+        }}
+        multiline
+        onEndEditing={callUpdateItem}
+        onSubmitEditing={onSubmit}
+        blurOnSubmit
+        onKeyPress={onKeyPress}
+      />
+    </View>
+  );
+};
 
-export default ToDoItem
+export default ToDoItem;

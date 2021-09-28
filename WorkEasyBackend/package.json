@@ -1,8 +1,9 @@
 {
-  "name": "Taskade",
+  "name": "WorkEasy-Backend",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
+  "type": "module",
   "scripts": {
     "start": "node src/index.js",
     "dev": "nodemon src/index.js",
@@ -17,6 +18,12 @@
     "dotenv": "^8.2.0",
     "graphql": "^15.5.0",
     "jsonwebtoken": "^8.5.1",
-    "mongodb": "^3.6.5"
+    "mongodb": "^3.6.5",
+    "babel-cli": "^6.26.0",
+    "babel-preset-env": "^1.7.0"
+  },
+  "devDependencies": {
+    "babel-plugin-transform-object-rest-spread": "^6.26.0",
+    "nodemon": "^2.0.12"
   }
 }
