@@ -124,6 +124,7 @@ const Mutation = {
     if (!user) {
       throw new Error("Authentication Error. Please sign in");
     }
+    console.log(content);
     const newToDo = {
       content,
       taskListId: ObjectID(taskListId),
@@ -146,7 +147,7 @@ const Mutation = {
         $set: data,
       }
     );
-
+    console.log(data);
     return await db.collection("ToDo").findOne({ _id: ObjectID(data.id) });
   },
 

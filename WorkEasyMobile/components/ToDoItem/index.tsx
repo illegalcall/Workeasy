@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import { View, TextInput } from "react-native";
+import { View, TextInput, Text } from "react-native";
 import { useMutation, gql } from "@apollo/client";
 
 import Checkbox from "../Checkbox";
@@ -86,22 +86,24 @@ const ToDoItem = ({ todo, onSubmit }: ToDoItemProps) => {
       />
 
       {/* Text Input */}
-      <TextInput
-        ref={input}
-        value={content}
-        onChangeText={setContent}
+      <Text
+        // ref={input}
+        // value={content}
+        // onChangeText={setContent}
         style={{
           flex: 1,
           fontSize: 18,
           color: "black",
           marginLeft: 12,
         }}
-        multiline
-        onEndEditing={callUpdateItem}
-        onSubmitEditing={onSubmit}
-        blurOnSubmit
-        onKeyPress={onKeyPress}
-      />
+        // multiline
+        // onEndEditing={callUpdateItem}
+        // onSubmitEditing={onSubmit}
+        // blurOnSubmit
+        // onKeyPress={onKeyPress}
+      >
+        {content}
+      </Text>
     </View>
   );
 };
