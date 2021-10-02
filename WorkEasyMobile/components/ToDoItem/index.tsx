@@ -1,12 +1,20 @@
 import React, { useState, useEffect, useRef } from "react";
 import { View, TextInput, Text } from "react-native";
-import { useMutation, gql, useQuery } from "@apollo/client";
+import { useMutation, gql, useQuery, useLazyQuery } from "@apollo/client";
 import { AntDesign } from "@expo/vector-icons";
 
 import Checkbox from "../Checkbox";
 
 
-  
+const GET_TODO = gql`
+  query getTodo($id: ID!) {
+    getTodo(id:$id){
+    id
+    content
+    isCompleted
+  }
+  }
+`;  
   const UPDATE_TODO = gql`
     mutation updateToDo($id: ID!, $content: String, $isCompleted: Boolean) {
       updateToDo(id: $id, content: $content, isCompleted: $isCompleted) {
@@ -44,6 +52,10 @@ const ToDoItem = ({ todo, onSubmit,handleDeleteItem }: ToDoItemProps) => {
   
   const [updateItem] = useMutation(UPDATE_TODO);
   // const =useQuery(GET_TODO)
+  const [getTodoData, { called,loading, error, data }] = useLazyQuery(
+    GET_TODO,
+    { variables: { todo.id } }
+  );
   const input = useRef(null);
   
   const callUpdateItem = () => {
@@ -56,15 +68,12 @@ const ToDoItem = ({ todo, onSubmit,handleDeleteItem }: ToDoItemProps) => {
     });
   };
   
-
   useEffect(() => {
     if (todo&&todo.content) {
       setIsChecked(todo.isCompleted);
       setContent(todo.content);
     }
     //initial setting
-
-    
   }, [todo]);
   
   useEffect(() => {
@@ -79,7 +88,16 @@ const ToDoItem = ({ todo, onSubmit,handleDeleteItem }: ToDoItemProps) => {
       console.warn("Delete item");
     }
   };
-  
+  const [deletedBool,setDeletedBool]=useState<boolean>(false)
+  useEffect(()=>{
+    if(deletedBool){
+      getTodoData()
+      // console.log();
+      
+      setDeletedBool(false)
+    }
+  },[deletedBool])
+
   return (
     // <View>
     content?(
@@ -118,8 +136,7 @@ const ToDoItem = ({ todo, onSubmit,handleDeleteItem }: ToDoItemProps) => {
           onPress={() => {
             console.log("step1");
             console.log(todo.id);
-            
-            
+            setDeletedBool(!deletedBool)
             handleDeleteItem(todo.id)
             // callUpdateItem();
 

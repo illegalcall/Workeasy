@@ -8,22 +8,14 @@ import {
   Alert,
   Button,
 } from "react-native";
-import { useQuery, useMutation, gql } from "@apollo/client";
+import { useQuery, useMutation, gql, useLazyQuery } from "@apollo/client";
 import { useRoute } from "@react-navigation/native";
 
 import ToDoItem from "../components/ToDoItem";
 
 import { Text, View } from "../components/Themed";
 
-const GET_TODO = gql`
-  query getTodo($id: ID!) {
-    getTodo(id:$id){
-    id
-    content
-    isCompleted
-  }
-  }
-`;
+
 
 const DELETE_TODO = gql`
   mutation deleteToDo($id: ID!) {
@@ -79,10 +71,11 @@ export default function ToDoScreen() {
   const route = useRoute();
   const id = route.params.id;
 
-  const { data, error, loading } = useQuery(GET_PROJECT, { variables: { id } });
-
-  
-  const [deletedBool,setDeletedBool]=useState<boolean>(false)
+  // const { data, error, loading } = useQuery(GET_PROJECT, { variables: { id } });
+  const [getProjectData, { called,loading, error, data }] = useLazyQuery(
+    GET_PROJECT,
+    { variables: { id } }
+  );
   
   const [createTodo, { data: createTodoData, error: createTodoError }] =
   useMutation(CREATE_TODO, { refetchQueries: GET_PROJECT });
@@ -96,7 +89,8 @@ export default function ToDoScreen() {
   }, [error]);
   
   useEffect(() => {
-    if (data) {
+    getProjectData()
+    if (called&&!loading&&!error&&data) {
       setProject(data.getTaskList);
       setTitle(data.getTaskList.title);
     }
@@ -119,8 +113,13 @@ export default function ToDoScreen() {
         id: id,
       },
     });
-    
-    console.log("delItem",delItem);
+    getProjectData()
+    if(!loading&&data)
+    {
+      console.log("after delete call");
+      
+    }
+    // console.log("delItem",delItem);
     
   };
   const [todo, setTodo] = useState("");
