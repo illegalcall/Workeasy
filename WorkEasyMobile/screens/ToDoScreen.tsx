@@ -53,7 +53,7 @@ const CREATE_TODO = gql`
 let id = "4";
 
 export default function ToDoScreen() {
-  const [project, setProject] = useState(null);
+  const [project, setProject] = useState<any>(null);
   const [title, setTitle] = useState("");
 
   const route = useRoute();
@@ -118,14 +118,14 @@ export default function ToDoScreen() {
           placeholder={"Title"}
           style={styles.title}
         />
-        <View style={[styles.addTodoInput, { flexDirection: "row" }]}>
+        <View style={styles.addTodo}>
           <TextInput
             style={styles.addTodoInput}
             onChangeText={setTodo}
             value={todo}
             placeholder="enter new todo"
           />
-          <Button title="Add new todo" onPress={() => createNewItem()} />
+          <Button style={styles.addTodoBtn} title="Add new todo" onPress={() => createNewItem()} />
         </View>
         <FlatList
           data={project.todos}
@@ -152,9 +152,16 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     marginBottom: 12,
   },
+  addTodo:{
+    flexDirection: "row" ,
+    justifyContent:"space-between",
+  },
   addTodoInput: {
-    width: "100%",
+    flex:1,
     fontSize: 17,
     color: "black",
   },
+  addTodoBtn:{
+    flex:1
+  }
 });

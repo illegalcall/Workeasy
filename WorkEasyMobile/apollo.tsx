@@ -3,7 +3,7 @@ import { setContext } from "@apollo/client/link/context";
 import AsyncStorage from "@react-native-community/async-storage";
 
 // const URI = 'http://localhost:4000/';
-const URI = "http://192.168.0.108:4000";
+const URI = "http://192.168.0.6:4000";
 
 const httpLink = createHttpLink({
   uri: URI,
