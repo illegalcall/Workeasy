@@ -113,7 +113,7 @@ const Mutation = {
       throw new Error("Authentication Error. Please sign in");
     }
 
-    // TODO only collaborators of this task list should be able to delete
+    // TODO: only collaborators of this task list should be able to delete
     await db.collection("TaskList").removeOne({ _id: ObjectID(id) });
 
     return true;
@@ -152,18 +152,36 @@ const Mutation = {
   },
 
   deleteToDo: async (_, { id }, { db, user }) => {
+    console.log("delete in bakcend");
     if (!user) {
       throw new Error("Authentication Error. Please sign in");
     }
     const result = await db.collection("ToDo").findOne({
-      _id: ObjectID(data.id),
+      _id: ObjectID(id),
     });
-    console.log("deleted,todo", id);
 
-    // TODO only collaborators of this task list should be able to delete
-    await db.collection("ToDo").removeOne({ _id: ObjectID(id) });
-    console.log("resitl", result);
-    return result;
+    // TODO: only collaborators of this task list should be able to delete
+    // let result;
+    try{
+      result = await db.collection("ToDo").removeOne({ _id: ObjectID(id) });
+      console.log("resitl", result);
+      
+    }
+    catch{
+      console.log("not found");
+    }
+    if(result){
+      return {
+        id:result._id,
+        isDeleted:true
+      }
+    }
+    else
+    return {
+      id:id,
+      isDeleted:false
+    }
+    
   },
 };
 export default Mutation;

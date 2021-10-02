@@ -1,6 +1,7 @@
 type Query {
   myTaskLists: [TaskList!]!
   getTaskList(id: ID!): TaskList
+  getTodo(id: ID!): ToDo
 }
 
 type Mutation {
@@ -13,8 +14,12 @@ type Mutation {
   addUserToTaskList(taskListId: ID!, userId: ID!): TaskList
 
   createToDo(content: String!, taskListId: ID!): ToDo!
-  updateToDo(id: ID!, content: String, isCompleted: Boolean): ToDo!
-  deleteToDo(id: ID!): ToDo!
+  updateToDo(
+    id: ID!
+    content: String
+    isCompleted: Boolean
+  ): ToDo!
+  deleteToDo(id: ID!): deletedTodo!
 }
 
 input SignUpInput {
@@ -57,4 +62,8 @@ type ToDo {
   isCompleted: Boolean!
 
   taskList: TaskList!
+}
+type deletedTodo {
+  id: ID!
+  isDeleted: Boolean!
 }

@@ -15,6 +15,25 @@ import ToDoItem from "../components/ToDoItem";
 
 import { Text, View } from "../components/Themed";
 
+const GET_TODO = gql`
+  query getTodo($id: ID!) {
+    getTodo(id:$id){
+    id
+    content
+    isCompleted
+  }
+  }
+`;
+
+const DELETE_TODO = gql`
+  mutation deleteToDo($id: ID!) {
+    deleteToDo(id: $id) {
+    id
+    isDeleted
+    }
+  }
+`;
+
 const GET_PROJECT = gql`
   query getTasklist($id: ID!) {
     getTaskList(id: $id) {
@@ -53,6 +72,7 @@ const CREATE_TODO = gql`
 let id = "4";
 
 export default function ToDoScreen() {
+
   const [project, setProject] = useState<any>(null);
   const [title, setTitle] = useState("");
 
@@ -61,23 +81,27 @@ export default function ToDoScreen() {
 
   const { data, error, loading } = useQuery(GET_PROJECT, { variables: { id } });
 
+  
+  const [deletedBool,setDeletedBool]=useState<boolean>(false)
+  
   const [createTodo, { data: createTodoData, error: createTodoError }] =
-    useMutation(CREATE_TODO, { refetchQueries: GET_PROJECT });
-
+  useMutation(CREATE_TODO, { refetchQueries: GET_PROJECT });
+  const [deleteItem, { data: deleteTodoData,loading:deleteLoading, error: deleteTodoError }] = useMutation(DELETE_TODO,{ refetchQueries: GET_PROJECT});
+  
   useEffect(() => {
     if (error) {
       console.log(error);
       Alert.alert("Error fetching project", error.message);
     }
   }, [error]);
-
+  
   useEffect(() => {
     if (data) {
       setProject(data.getTaskList);
       setTitle(data.getTaskList.title);
     }
   }, [data]);
-
+  
   const createNewItem = () => {
     if (todo.length == 0) return;
     createTodo({
@@ -86,14 +110,18 @@ export default function ToDoScreen() {
         taskListId: id,
       },
     });
-    // const newTodos = [...todos];
-    // newTodos.splice(atIndex, 0, {
-    //   id: id,
-    //   content: '',
-    //   isCompleted: false
-    // })
-    // setTodos(newTodos);
     setTodo(""); //clear after submit
+  };
+  const handleDeleteItem = (id?:string) => {
+    console.log("delete pressed",id);
+    const delItem = deleteItem({
+      variables: {
+        id: id,
+      },
+    });
+    
+    console.log("delItem",delItem);
+    
   };
   const [todo, setTodo] = useState("");
   const handleTodoChange = () => {
@@ -125,12 +153,15 @@ export default function ToDoScreen() {
             value={todo}
             placeholder="enter new todo"
           />
-          <Button style={styles.addTodoBtn} title="Add new todo" onPress={() => createNewItem()} />
+          <Button 
+          // style={styles.addTodoBtn} 
+          title="Add new todo" 
+          onPress={() => createNewItem()} />
         </View>
         <FlatList
           data={project.todos}
           renderItem={({ item, index }) => (
-            <ToDoItem todo={item} onSubmit={() => createNewItem()} />
+            <ToDoItem todo={item} onSubmit={() => createNewItem()} handleDeleteItem={handleDeleteItem} />
           )}
           style={{ width: "100%" }}
         />
