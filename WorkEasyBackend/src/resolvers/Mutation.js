@@ -155,11 +155,15 @@ const Mutation = {
     if (!user) {
       throw new Error("Authentication Error. Please sign in");
     }
+    const result = await db.collection("ToDo").findOne({
+      _id: ObjectID(data.id),
+    });
+    console.log("deleted,todo", id);
 
     // TODO only collaborators of this task list should be able to delete
     await db.collection("ToDo").removeOne({ _id: ObjectID(id) });
-
-    return true;
+    console.log("resitl", result);
+    return result;
   },
 };
 export default Mutation;

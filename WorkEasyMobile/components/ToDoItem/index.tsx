@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { View, TextInput, Text } from "react-native";
 import { useMutation, gql } from "@apollo/client";
+import { AntDesign } from "@expo/vector-icons";
 
 import Checkbox from "../Checkbox";
 
@@ -24,6 +25,15 @@ const UPDATE_TODO = gql`
   }
 `;
 
+const DELETE_TODO = gql`
+  mutation deleteToDo($id: ID!) {
+    deleteToDo(id: $id) {
+        id
+      }
+    }
+  }
+`;
+
 interface ToDoItemProps {
   todo: {
     id: string;
@@ -38,6 +48,7 @@ const ToDoItem = ({ todo, onSubmit }: ToDoItemProps) => {
   const [content, setContent] = useState("");
 
   const [updateItem] = useMutation(UPDATE_TODO);
+  const [deleteItem] = useMutation(DELETE_TODO);
   const input = useRef(null);
 
   const callUpdateItem = () => {
@@ -49,7 +60,13 @@ const ToDoItem = ({ todo, onSubmit }: ToDoItemProps) => {
       },
     });
   };
-
+  const handleDeleteItem = () => {
+    deleteItem({
+      variables: {
+        id: todo.id,
+      },
+    });
+  };
   useEffect(() => {
     if (!todo) {
       return;
@@ -87,23 +104,23 @@ const ToDoItem = ({ todo, onSubmit }: ToDoItemProps) => {
 
       {/* Text Input */}
       <Text
-        // ref={input}
-        // value={content}
-        // onChangeText={setContent}
         style={{
           flex: 1,
           fontSize: 18,
           color: "black",
           marginLeft: 12,
         }}
-        // multiline
-        // onEndEditing={callUpdateItem}
-        // onSubmitEditing={onSubmit}
-        // blurOnSubmit
-        // onKeyPress={onKeyPress}
       >
         {content}
       </Text>
+
+      {/**delete icon */}
+      <AntDesign
+        name="delete"
+        size={24}
+        color="black"
+        onPress={() => handleDeleteItem()}
+      />
     </View>
   );
 };
