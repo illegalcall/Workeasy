@@ -29,7 +29,6 @@ const DELETE_TODO = gql`
   mutation deleteToDo($id: ID!) {
     deleteToDo(id: $id) {
         id
-      }
     }
   }
 `;
